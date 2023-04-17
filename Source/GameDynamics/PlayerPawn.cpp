@@ -8,6 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 
 
+
 // Sets default values
 APlayerPawn::APlayerPawn()
 {
@@ -25,28 +26,30 @@ APlayerPawn::APlayerPawn()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 0.0f;
+	CameraBoom->bUsePawnControlRotation = true;
+	CameraBoom->bEnableCameraLag = true;
 	_camera->SetupAttachment(CameraBoom);
 	_visibleComponent->SetupAttachment(RootComponent);
 	_speed = 500.0f;
 }
 void APlayerPawn::MoveX(float xinput)
 {
-	currentVelocity.X = xinput;
+	currentVelocity.X = FMath::Clamp(xinput, -1.0f, 1.0f) * _speed;
 }
 
 void APlayerPawn::MoveY(float yinput)
 {
-	currentVelocity.Y = yinput;
+	currentVelocity.Y = FMath::Clamp(yinput, -1.0f, 1.0f) * _speed;
 }
 
 void APlayerPawn::CameraYaw(float Yaw)
 {
-	cameraRotator.Yaw = Yaw;
+	cameraRotator.Yaw += Yaw;
 }
 
 void APlayerPawn::CameraPitch(float Pitch)
 {
-	cameraRotator.Pitch = Pitch;
+	cameraRotator.Pitch += Pitch;
 }
 
 
@@ -61,12 +64,17 @@ void APlayerPawn::BeginPlay()
 void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (!currentVelocity.IsZero())
-	{
-		SetActorLocation(GetActorLocation() + currentVelocity * DeltaTime*_speed);
-	}
-	_camera->AddRelativeRotation(cameraRotator);
-	AddActorWorldRotation(cameraRotator);
+	//Makes it so that the player moves in the direction they are facing
+	FVector forward = GetActorForwardVector();
+	FVector right = GetActorRightVector();
+	FVector move = (right * currentVelocity.Y + forward * currentVelocity.X) * DeltaTime;
+	AddActorWorldOffset(move, true);
+	//Makes it so that the camera rotates with the player
+	FRotator rot = GetActorRotation();
+	rot.Yaw += cameraRotator.Yaw;
+	rot.Pitch += FMath::Clamp(cameraRotator.Pitch, -80.0f, 80.0f);
+	SetActorRotation(rot);
+	cameraRotator = FRotator::ZeroRotator;
 }
 
 // Called to bind functionality to input

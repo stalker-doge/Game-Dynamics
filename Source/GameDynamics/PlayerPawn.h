@@ -27,6 +27,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Movement")
 		float _speed;
 
+
 	void MoveX(float xinput);
 	void MoveY(float yinput);
 	void CameraYaw(float Yaw);
