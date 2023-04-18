@@ -65,10 +65,10 @@ void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	//Makes it so that the player moves in the direction they are facing
-	FVector forward = GetActorForwardVector();
-	FVector right = GetActorRightVector();
-	FVector move = (right * currentVelocity.Y + forward * currentVelocity.X) * DeltaTime;
-	AddActorWorldOffset(move, true);
+	if (!currentVelocity.IsZero())
+	{
+		SetActorLocation(GetActorLocation() + currentVelocity * DeltaTime);
+	}
 	//Makes it so that the camera rotates with the player
 	FRotator rot = GetActorRotation();
 	rot.Yaw += cameraRotator.Yaw;
