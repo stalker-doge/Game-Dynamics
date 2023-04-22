@@ -32,9 +32,13 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 		class UBoxComponent* _collisionBox;
 
+	AActor* _heldActor;
+	bool _isHolding;
+
 	void MoveX(float xinput);
 	void MoveY(float yinput);
-	void Fire(float val);
+	void Fire();
+	void Release();
 
 protected:
 	// Called when the game starts or when spawned

@@ -8,6 +8,9 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/BoxComponent.h"
+#include "Perception/AISense_Sight.h"
+#include "Perception/AIPerceptionSystem.h"
+#include "GameplayTagContainer.h"
 
 void APlayerCharacter::MoveX(float xinput)
 {
@@ -15,11 +18,6 @@ void APlayerCharacter::MoveX(float xinput)
     {
         // find out which way is forward
         FRotator Rotation = Controller->GetControlRotation();
-        // Limit pitch when walking or falling
-        if (GetCharacterMovement()->IsMovingOnGround()||GetCharacterMovement()->IsFalling())
-        {
-            Rotation.Pitch = 0.0f;
-        }
         // add movement in that direction
         const FVector Direction = FRotationMatrix(Rotation).GetScaledAxis(EAxis::X);
         AddMovementInput(Direction, xinput);
@@ -32,16 +30,16 @@ void APlayerCharacter::MoveY(float yinput)
     {
         // find out which way is right
         const FRotator Rotation = Controller->GetControlRotation();
+
+		
         const FVector Direction = FRotationMatrix(Rotation).GetScaledAxis(EAxis::Y);
         // add movement in that direction
         AddMovementInput(Direction, yinput);
     }
 }
 
-void APlayerCharacter::Fire(float val)
+void APlayerCharacter::Fire()
 {
-	if (val > 0)
-	{
 
 		//Draw a raycast from the camera and print the hit actor
 		FHitResult HitResult;
@@ -52,9 +50,31 @@ void APlayerCharacter::Fire(float val)
 		bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
 		if (bHit)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *HitResult.GetActor()->GetName());
-			HitResult.GetActor()->SetActorLocation(_collisionBox->GetComponentLocation());
+			//checks if the hitresult is movable
+			if (HitResult.GetActor()->GetRootComponent()->IsSimulatingPhysics())
+			{
+				HitResult.GetActor()->SetActorLocation(_collisionBox->GetComponentLocation());
+				_heldActor = HitResult.GetActor();
+				_isHolding = true;
+			}
+
 		}
+}
+
+void APlayerCharacter::Release()
+{
+	if (_isHolding)
+	{
+		//throws the held actor away from the player using physics
+		FVector ForwardVector = _camera->GetForwardVector();
+		FVector ForceVector = ForwardVector * 1000.f;
+		//grabs the held actors static mesh
+		UStaticMeshComponent* StaticMesh = Cast<UStaticMeshComponent>(_heldActor->GetRootComponent());
+		StaticMesh->AddImpulse(ForceVector, NAME_None, true);
+		StaticMesh->SetEnableGravity(true);
+		StaticMesh = nullptr;
+		_heldActor = nullptr;
+		_isHolding = false;
 	}
 }
 
@@ -75,14 +95,18 @@ APlayerCharacter::APlayerCharacter()
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 0.0f;
 	CameraBoom->bEnableCameraLag = true;
+	CameraBoom->bUsePawnControlRotation = true;
 	_camera->SetupAttachment(CameraBoom);
+	_camera->bUsePawnControlRotation = true;
 	_visibleComponent->SetupAttachment(RootComponent);
 	_collisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	_collisionBox->SetupAttachment(RootComponent);
 	_collisionBox->SetBoxExtent(FVector(5.f, 5.f, 5.f));
 	//sets it a bit infront of the player
-	_collisionBox->SetRelativeLocation(FVector(30.f, 0.f, 0.f));
-	
+	_collisionBox->SetRelativeLocation(FVector(70.f, 0.f, 0.f));
+
+	_isHolding = false;
+	_heldActor = nullptr;
 }
 
 // Called when the game starts or when spawned
@@ -90,22 +114,35 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	UAIPerceptionSystem::RegisterPerceptionStimuliSource(GetWorld(), UAISense_Sight::StaticClass(), this);
 }
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	if (_isHolding)
+	{
+		_heldActor->SetActorLocation(_collisionBox->GetComponentLocation());
+		//disable the heldactors gravity
+		UStaticMeshComponent* StaticMesh = Cast<UStaticMeshComponent>(_heldActor->GetRootComponent());
+		StaticMesh->SetEnableGravity(false);
+	}
 }
 
 // Called to bind functionality to input
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	InputComponent->BindAction("PickUp", IE_Pressed, this, &APlayerCharacter::Fire);
+	InputComponent->BindAction("PickUp", IE_Released, this, &APlayerCharacter::Release);
+	
 	InputComponent->BindAxis("MoveForward", this, &APlayerCharacter::MoveX);
 	InputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveY);
 	InputComponent->BindAxis("MouseX", this, &APlayerCharacter::AddControllerYawInput);
 	InputComponent->BindAxis("MouseY", this, &APlayerCharacter::AddControllerPitchInput);
-	InputComponent->BindAxis("Fire", this, &APlayerCharacter::Fire);
+	
 }
 
