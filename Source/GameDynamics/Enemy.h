@@ -59,7 +59,18 @@ public:
 		void Attack();
 
 	UFUNCTION()
+		void ChasePlayer();
+
+	UFUNCTION()
 		TArray<AActor*> GetWaypoints();
+
+	UPROPERTY(EditAnywhere, Category = "Attacking")
+		float _damage;
+
+	UPROPERTY(EditAnywhere, Category = "Attacking")
+		float _timeBeforeNextAttack;
+	UPROPERTY(EditAnywhere, Category = "Attacking")
+		float _cooldown;
 
 protected:
 	// Called when the game starts or when spawned

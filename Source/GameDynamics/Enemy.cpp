@@ -39,6 +39,9 @@ AEnemy::AEnemy()
 	_currentWaypoint = 0;
 	_isPatrolling=true;
 	_isAttacking = false;
+	_damage = 10.f;
+	_timeBeforeNextAttack = 3.f;
+	_cooldown = 0.f;
 }
 
 // Called when the game starts or when spawned
@@ -60,7 +63,7 @@ void AEnemy::Tick(float DeltaTime)
 	}
 	if (_isAttacking)
 	{
-		Attack();
+		ChasePlayer();
 	}
 }
 
@@ -75,7 +78,6 @@ void AEnemy::OnSeePlayer(const TArray<AActor*>& _sensedActors)
 {
 	for (AActor* actor : _sensedActors)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("I see %s"), *actor->GetName());
 		if (actor->ActorHasTag("Player"))
 		{
 			_isPatrolling = false;
@@ -116,13 +118,26 @@ void AEnemy::Patrol()
 }
 void AEnemy::Attack()
 {
+	//if the cooldown is less than 0, attack the player
+	if (_cooldown <= 0.f)
+	{
+		_target->TakeDamage(_damage, FDamageEvent(), GetController(), this);
+		_cooldown = _timeBeforeNextAttack;
+	}
+	else
+	{
+		_cooldown -= GetWorld()->GetDeltaSeconds();
+	}
+}
+void AEnemy::ChasePlayer()
+{
 	//moves towards the player
 	FVector direction = _target->GetActorLocation() - GetActorLocation();
 	direction.Normalize();
 	AddMovementInput(direction, _speed);
-	if (FVector::Dist(GetActorLocation(), _target->GetActorLocation()) < 10.f)
+	if (FVector::Dist(GetActorLocation(), _target->GetActorLocation()) < 100.f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("I am attacking the player"));
+		Attack();
 	}
 	//if the target is out of sight, patrol again
 	if (FVector::Dist(GetActorLocation(), _target->GetActorLocation()) > _attackDistance)

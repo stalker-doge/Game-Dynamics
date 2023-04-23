@@ -12,6 +12,17 @@
 #include "Perception/AIPerceptionSystem.h"
 #include "GameplayTagContainer.h"
 
+void APlayerCharacter::ReceiveDamage(float damage)
+{
+	_health -= damage;
+	if (_health <= 0)
+	{
+		_health = 0;
+		_isDead = true;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Health: %f"), _health);
+}
+
 void APlayerCharacter::MoveX(float xinput)
 {
     if ((Controller != NULL) && (xinput != 0.0f))
@@ -107,6 +118,7 @@ APlayerCharacter::APlayerCharacter()
 
 	_isHolding = false;
 	_heldActor = nullptr;
+	_health = 100.f;
 }
 
 // Called when the game starts or when spawned
@@ -146,3 +158,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	
 }
 
+float APlayerCharacter::TakeDamage(const float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	ReceiveDamage(DamageAmount);
+
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}

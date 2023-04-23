@@ -20,10 +20,10 @@ public:
 	UPROPERTY(EditAnywhere)
 		USceneComponent* _visibleComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 		class USpringArmComponent* CameraBoom;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 		class UCameraComponent* _camera;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
@@ -32,8 +32,15 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 		class UBoxComponent* _collisionBox;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
+		float _health;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void ReceiveDamage(float damage);
+	
 	AActor* _heldActor;
 	bool _isHolding;
+	bool _isDead;
 
 	void MoveX(float xinput);
 	void MoveY(float yinput);
@@ -51,4 +58,5 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual float TakeDamage(const float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 };
