@@ -18,6 +18,7 @@ AObjectiveTargets::AObjectiveTargets()
 	_collisionBox->SetupAttachment(_mesh);
 	_collisionBox->SetCollisionProfileName(TEXT("Trigger"));
 	_mesh->SetupAttachment(RootComponent);
+	_mesh->SetCollisionProfileName(TEXT("NoCollison"));
 	
 	_collisionBox->OnComponentBeginOverlap.AddDynamic(this, &AObjectiveTargets::OnOverlapBegin);
 
@@ -31,15 +32,11 @@ void AObjectiveTargets::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAct
 void AObjectiveTargets::Toggle()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Toggle"));
-	//find an actor of type ADrawBridge
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADrawBridge::StaticClass(), FoundActors);
-	//iterate through the array
 	for (AActor* Actor : FoundActors)
 	{
-		//cast the actor to ADrawBridge
 		ADrawBridge* DrawBridge = Cast<ADrawBridge>(Actor);
-		//call the ScoreHit function
 		DrawBridge->ScoreHit();
 	}
 }

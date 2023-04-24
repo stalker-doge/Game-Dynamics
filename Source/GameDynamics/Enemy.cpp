@@ -35,7 +35,6 @@ AEnemy::AEnemy()
 	_perceptionComponent->SetDominantSense(_sightConfig->GetSenseImplementation());
 	_perceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AEnemy::OnSeePlayer);
 	_speed = 100.0f;
-	//changes the character's movement speed
 	_currentWaypoint = 0;
 	_isPatrolling=true;
 	_isAttacking = false;

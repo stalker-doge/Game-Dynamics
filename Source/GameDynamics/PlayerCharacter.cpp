@@ -103,7 +103,6 @@ APlayerCharacter::APlayerCharacter()
 	_camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	_visibleComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("visibleComponent"));
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
-	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 0.0f;
 	CameraBoom->bEnableCameraLag = true;
 	CameraBoom->bUsePawnControlRotation = true;
@@ -113,6 +112,8 @@ APlayerCharacter::APlayerCharacter()
 	_collisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	_collisionBox->SetupAttachment(RootComponent);
 	_collisionBox->SetBoxExtent(FVector(5.f, 5.f, 5.f));
+	CameraBoom->SetupAttachment(_visibleComponent);
+
 	//sets it a bit infront of the player
 	_collisionBox->SetRelativeLocation(FVector(70.f, 0.f, 0.f));
 
@@ -137,7 +138,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	if (_isHolding)
 	{
 		_heldActor->SetActorLocation(_collisionBox->GetComponentLocation());
-		//disable the heldactors gravity
+		//disable the held Actors gravity
 		UStaticMeshComponent* StaticMesh = Cast<UStaticMeshComponent>(_heldActor->GetRootComponent());
 		StaticMesh->SetEnableGravity(false);
 	}
