@@ -11,6 +11,7 @@
 #include "Perception/AISense_Sight.h"
 #include "Perception/AIPerceptionSystem.h"
 #include "GameplayTagContainer.h"
+#include "Components/CapsuleComponent.h"
 
 void APlayerCharacter::ReceiveDamage(float damage)
 {
@@ -97,8 +98,6 @@ APlayerCharacter::APlayerCharacter()
 	
     AutoPossessPlayer = EAutoReceiveInput::Player0;
 	
-	// Create a dummy root component we can attach things to.
-	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	// Create a camera and a visible object
 	_camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	_visibleComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("visibleComponent"));
@@ -108,18 +107,14 @@ APlayerCharacter::APlayerCharacter()
 	CameraBoom->bUsePawnControlRotation = true;
 	_camera->SetupAttachment(CameraBoom);
 	_camera->bUsePawnControlRotation = true;
-	_visibleComponent->SetupAttachment(RootComponent);
 	_collisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
-	_collisionBox->SetupAttachment(RootComponent);
 	_collisionBox->SetBoxExtent(FVector(5.f, 5.f, 5.f));
-	CameraBoom->SetupAttachment(_visibleComponent);
-
 	//sets it a bit infront of the player
 	_collisionBox->SetRelativeLocation(FVector(70.f, 0.f, 0.f));
-
 	_isHolding = false;
 	_heldActor = nullptr;
 	_health = 100.f;
+	GetCapsuleComponent()->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 }
 
 // Called when the game starts or when spawned
