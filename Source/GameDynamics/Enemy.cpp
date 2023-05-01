@@ -43,6 +43,13 @@ AEnemy::AEnemy()
 	_cooldown = 0.f;
 }
 
+void AEnemy::RotateTowards(FVector targetLocation)
+{
+	//rotate using interpolation
+	FRotator newRotation = FRotationMatrix::MakeFromX(targetLocation - GetActorLocation()).Rotator();
+	SetActorRotation(FMath::RInterpTo(GetActorRotation(), newRotation, GetWorld()->GetDeltaSeconds(), 5.f));
+}
+
 // Called when the game starts or when spawned
 void AEnemy::BeginPlay()
 {
@@ -134,6 +141,7 @@ void AEnemy::ChasePlayer()
 	FVector direction = _target->GetActorLocation() - GetActorLocation();
 	direction.Normalize();
 	AddMovementInput(direction, _speed);
+	RotateTowards(_target->GetActorLocation());
 	if (FVector::Dist(GetActorLocation(), _target->GetActorLocation()) < 100.f)
 	{
 		Attack();

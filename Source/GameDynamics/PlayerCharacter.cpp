@@ -115,6 +115,9 @@ APlayerCharacter::APlayerCharacter()
 	_heldActor = nullptr;
 	_health = 100.f;
 	GetCapsuleComponent()->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+
+	_score = 0;
+	_UIMessage = "Grab collectables, throw the orbs towards the targets and find the final treasure!";
 }
 
 // Called when the game starts or when spawned

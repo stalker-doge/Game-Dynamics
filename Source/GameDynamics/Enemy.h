@@ -72,6 +72,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Attacking")
 		float _cooldown;
 
+	UFUNCTION()
+		void RotateTowards(FVector targetLocation);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

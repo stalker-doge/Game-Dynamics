@@ -42,6 +42,12 @@ public:
 	bool _isHolding;
 	bool _isDead;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
+	FString _UIMessage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
+		int _score;
+	
 	void MoveX(float xinput);
 	void MoveY(float yinput);
 	void Fire();
