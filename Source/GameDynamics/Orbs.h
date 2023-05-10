@@ -18,7 +18,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		class UStaticMeshComponent* _mesh;
 	UPROPERTY(EditAnywhere)
-		class UBoxComponent* _collisionBox;
+		class USphereComponent* _collisionSphere;
 
 protected:
 	// Called when the game starts or when spawned

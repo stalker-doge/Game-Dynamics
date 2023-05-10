@@ -17,10 +17,13 @@ AObjectiveTargets::AObjectiveTargets()
 	_collisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	_collisionBox->SetupAttachment(_mesh);
 	_collisionBox->SetCollisionProfileName(TEXT("Trigger"));
+	_collisionBox->SetBoxExtent(FVector(50.f, 50.f, 50.f));
 	_mesh->SetupAttachment(RootComponent);
 	_mesh->SetCollisionProfileName(TEXT("NoCollison"));
 	
 	_collisionBox->OnComponentBeginOverlap.AddDynamic(this, &AObjectiveTargets::OnOverlapBegin);
+	
+	_isTriggered = false;
 
 }
 
@@ -31,13 +34,17 @@ void AObjectiveTargets::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAct
 
 void AObjectiveTargets::Toggle()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Toggle"));
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADrawBridge::StaticClass(), FoundActors);
-	for (AActor* Actor : FoundActors)
+	if (!_isTriggered)
 	{
-		ADrawBridge* DrawBridge = Cast<ADrawBridge>(Actor);
-		DrawBridge->ScoreHit();
+		UE_LOG(LogTemp, Warning, TEXT("Toggle"));
+		TArray<AActor*> FoundActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADrawBridge::StaticClass(), FoundActors);
+		for (AActor* Actor : FoundActors)
+		{
+			ADrawBridge* DrawBridge = Cast<ADrawBridge>(Actor);
+			DrawBridge->ScoreHit();
+		}
+		_isTriggered = true;
 	}
 }
 
