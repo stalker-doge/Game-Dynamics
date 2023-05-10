@@ -47,6 +47,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
 		int _score;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
+		float _damageTimer;
 	
 	void MoveX(float xinput);
 	void MoveY(float yinput);

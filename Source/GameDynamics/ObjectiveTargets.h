@@ -15,7 +15,7 @@ public:
 	// Sets default values for this actor's properties
 	AObjectiveTargets();
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* _mesh;
 	UPROPERTY(EditAnywhere)
 		class UBoxComponent* _collisionBox;

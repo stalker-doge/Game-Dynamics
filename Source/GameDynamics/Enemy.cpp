@@ -102,6 +102,8 @@ void AEnemy::Patrol()
 		//move to waypoint 1
 		FVector direction = _waypoints[1]->GetActorLocation() - GetActorLocation();
 		direction.Normalize();
+		//makes it so that the enemy rotates towards the waypoint
+		RotateTowards(_waypoints[1]->GetActorLocation());
 		AddMovementInput(direction, _speed);
 		//if the distance is less than 100, change the current waypoint to 1
 		if (FVector::Dist(GetActorLocation(), _waypoints[1]->GetActorLocation()) < 100.f)
@@ -114,6 +116,7 @@ void AEnemy::Patrol()
 		//move to waypoint 0
 		FVector direction = _waypoints[0]->GetActorLocation() - GetActorLocation();
 		direction.Normalize();
+		RotateTowards(_waypoints[0]->GetActorLocation());
 		AddMovementInput(direction, _speed);
 		//if the distance is less than 100, change the current waypoint to 0
 		if (FVector::Dist(GetActorLocation(), _waypoints[0]->GetActorLocation()) < 100.f)

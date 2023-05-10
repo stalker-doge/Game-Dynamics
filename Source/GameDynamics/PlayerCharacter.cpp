@@ -126,6 +126,8 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	UAIPerceptionSystem::RegisterPerceptionStimuliSource(GetWorld(), UAISense_Sight::StaticClass(), this);
+
+	
 }
 
 // Called every frame
@@ -139,6 +141,13 @@ void APlayerCharacter::Tick(float DeltaTime)
 		//disable the held Actors gravity
 		UStaticMeshComponent* StaticMesh = Cast<UStaticMeshComponent>(_heldActor->GetRootComponent());
 		StaticMesh->SetEnableGravity(false);
+	}
+	//every 5 seconds deal 1 damage to the player
+	_damageTimer += DeltaTime;
+	if (_damageTimer >= 5.f)
+	{
+		_damageTimer = 0.f;
+		ReceiveDamage(1.f);
 	}
 }
 
