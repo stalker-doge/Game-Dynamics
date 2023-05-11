@@ -3,6 +3,8 @@
 
 #include "DrawBridge.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
+#include "TargetOrb.h"
 
 // Sets default values
 ADrawBridge::ADrawBridge()
@@ -22,7 +24,13 @@ void ADrawBridge::ScoreHit()
 	_currentHits++;
 	if (_currentHits >= _hitsNeeded)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Bridge is down"));
+		//spawns a target orb
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+		FVector SpawnLocation = GetActorLocation();
+		FRotator SpawnRotation = GetActorRotation();
+		ATargetOrb* TargetOrb = GetWorld()->SpawnActor<ATargetOrb>(_targetOrbClass, SpawnLocation, SpawnRotation, SpawnParams);
 	}
 }
 

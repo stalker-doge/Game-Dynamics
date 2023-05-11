@@ -21,6 +21,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		class UStaticMeshComponent* _mesh;
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class ATargetOrb> _targetOrbClass;
+
 	void ScoreHit();
 	int _currentHits;
 

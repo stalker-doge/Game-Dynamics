@@ -15,7 +15,7 @@ class GAMEDYNAMICS_API AOrbs : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AOrbs();
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 		class UStaticMeshComponent* _mesh;
 	UPROPERTY(EditAnywhere)
 		class USphereComponent* _collisionSphere;
