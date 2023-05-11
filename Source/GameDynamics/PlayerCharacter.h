@@ -50,6 +50,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player")
 		float _damageTimer;
+
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void Respawn();
+
+	FVector _respawnLocation;
 	
 	void MoveX(float xinput);
 	void MoveY(float yinput);

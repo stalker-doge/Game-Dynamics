@@ -20,8 +20,8 @@ void AOrbSpawner::SpawnOrb()
 	{
 		FVector spawnLocation = GetActorLocation();
 		spawnLocation.X += FMath::RandRange(-_spawnRadius, _spawnRadius);
-		spawnLocation.Y = 10;
-		spawnLocation.Z += FMath::RandRange(-_spawnRadius, _spawnRadius);
+		spawnLocation.Y += FMath::RandRange(-_spawnRadius, _spawnRadius);
+		spawnLocation.Z = 100;
 		FActorSpawnParameters spawnParams;
 		spawnParams.Owner = this;
 		spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;

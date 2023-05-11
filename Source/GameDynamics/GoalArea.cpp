@@ -15,8 +15,9 @@ AGoalArea::AGoalArea()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	Goal = CreateDefaultSubobject<UBoxComponent>(TEXT("Goal"));
-	Goal->SetCollisionProfileName("Trigger");
-	Goal->OnComponentBeginOverlap.AddDynamic(this, &AGoalArea::OnGoalOverlap);
+	Goal->SetCollisionProfileName(TEXT("Trigger"));
+	Goal->SetGenerateOverlapEvents(true);
+	Goal->OnComponentBeginOverlap.AddDynamic(this, &AGoalArea::OnOverlapBegin);
 	RootComponent = Goal;
 	
 	GoalMesh=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
@@ -28,8 +29,9 @@ AGoalArea::AGoalArea()
 
 }
 
-void AGoalArea::OnGoalOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AGoalArea::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Overlap"));
 	ATargetOrb* TargetOrb = Cast<ATargetOrb>(OtherActor);
 	if (TargetOrb)
 	{

@@ -24,6 +24,11 @@ void APlayerCharacter::ReceiveDamage(float damage)
 	UE_LOG(LogTemp, Warning, TEXT("Health: %f"), _health);
 }
 
+void APlayerCharacter::Respawn()
+{
+	SetActorLocation(_respawnLocation);
+}
+
 void APlayerCharacter::MoveX(float xinput)
 {
     if ((Controller != NULL) && (xinput != 0.0f))
@@ -118,6 +123,7 @@ APlayerCharacter::APlayerCharacter()
 
 	_score = 0;
 	_UIMessage = "Grab collectables, throw the orbs towards the targets and find the final treasure!";
+
 }
 
 // Called when the game starts or when spawned
@@ -126,6 +132,8 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	UAIPerceptionSystem::RegisterPerceptionStimuliSource(GetWorld(), UAISense_Sight::StaticClass(), this);
+	
+	_respawnLocation = GetActorLocation();
 
 	
 }
