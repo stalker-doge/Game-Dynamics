@@ -21,10 +21,6 @@ public:
 		int _currentWaypoint;
 	UPROPERTY(EditAnywhere, Category = "Waypoints")
 		float _speed;
-	UPROPERTY(EditAnywhere, Category = "Waypoints")
-		float _springConstant;
-	UPROPERTY(EditAnywhere, Category = "Waypoints")
-		float _dampingFactor;
 
 	UPROPERTY(EditAnywhere, Category = "Bridge")
 		class UStaticMeshComponent* _mesh;
