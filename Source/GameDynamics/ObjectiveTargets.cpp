@@ -32,6 +32,11 @@ void AObjectiveTargets::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAct
 	Toggle();
 }
 
+void AObjectiveTargets::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+	Toggle();
+}
+
 void AObjectiveTargets::Toggle()
 {
 	if (!_isTriggered)
